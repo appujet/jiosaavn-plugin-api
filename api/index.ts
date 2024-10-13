@@ -71,11 +71,9 @@ app.get('/playlist', async (c) => {
 })
 
 app.get('/recommendations', async (c) => {
-  const url = c.req.query('url')
+  const id = c.req.query('id')
   const limit = Number(c.req.query('limit')) || 10
-  if (!url) return c.json({ error: 'Missing URL' })
-  const id = api.extract.track(url)
-  if (!id) return c.json({ error: 'Invalid URL' })
+  if (!id) return c.json({ error: 'Missing ' })
   const recommendations = await api.getRecommendations(id, limit)
   return c.json(recommendations)
 })

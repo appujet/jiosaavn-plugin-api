@@ -17,7 +17,7 @@ This is a simple Node.js API that allows you to search for tracks, artists, albu
 <details>
 <summary>Example Payload</summary>
 
-```json
+```js
 {
   results: [
     {
@@ -128,7 +128,7 @@ This is a simple Node.js API that allows you to search for tracks, artists, albu
 <details>
   <summary>Response Example</summary>
 
-```json
+```js
 {
   track: {
     identifier: "S0U546YS",
@@ -157,7 +157,7 @@ This is a simple Node.js API that allows you to search for tracks, artists, albu
 <details>
   <summary>Response Example</summary>
   
-  ```json
+  ```js
   {
   track: [
     {

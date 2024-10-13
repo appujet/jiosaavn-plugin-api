@@ -1,5 +1,9 @@
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
+import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
+import { prettyJSON } from 'hono/pretty-json'
+
 import { JioSaavnAPI } from './jioSaavn'
 
 export const config = {
@@ -7,6 +11,10 @@ export const config = {
 }
 
 const app = new Hono().basePath('/api')
+
+app.use('*', cors())
+app.use('*', logger())
+app.use('*', prettyJSON())
 
 const api = new JioSaavnAPI()
 
@@ -26,33 +34,49 @@ app.get('/track/id/:id', async (c) => {
    return c.json(track)
 })
 
-app.get('/track/:url', async (c) => {
-  const url = c.req.param('url')
-  const track = await api.getTrack(url)
+app.get('/track', async (c) => {
+  const url = c.req.query('url')
+  if (!url) return c.json({ error: 'Missing URL' })
+  const id = api.extract.track(url)
+  if (!id) return c.json({ error: 'Invalid URL' })
+  const track = await api.getTrack(id)
   return c.json(track)
 })
 
-app.get('/album/:url', async (c) => {
+app.get('/album', async (c) => {
   const url = c.req.param('url')
-  const album = await api.getAlbum(url)
+  if (!url) return c.json({ error: 'Missing URL' })
+  const id = api.extract.album(url)
+  if (!id) return c.json({ error: 'Invalid URL' })
+  const album = await api.getAlbum(id)
   return c.json(album)
 })
 
-app.get('/artist/:url', async (c) => {
+app.get('/artist', async (c) => {
   const url = c.req.param('url')
-  const artist = await api.getArtist(url)
+  if (!url) return c.json({ error: 'Missing URL' })
+  const id = api.extract.artist(url)
+  if (!id) return c.json({ error: 'Invalid URL' })
+  const artist = await api.getArtist(id)
   return c.json(artist)
 })
 
-app.get('/playlist/:url', async (c) => {
+app.get('/playlist', async (c) => {
   const url = c.req.param('url')
-  const playlist = await api.getPlaylist(url)
+  if (!url) return c.json({ error: 'Missing URL' })
+  const id = api.extract.playlist(url)
+  if (!id) return c.json({ error: 'Invalid URL' })
+  const playlist = await api.getPlaylist(id)
   return c.json(playlist)
 })
 
-app.get('/recommendations/:url', async (c) => {
+app.get('/recommendations', async (c) => {
   const url = c.req.param('url')
-  const recommendations = await api.getRecommendations(url)
+  const limit = Number(c.req.query('limit')) || 10
+  if (!url) return c.json({ error: 'Missing URL' })
+  const id = api.extract.track(url)
+  if (!id) return c.json({ error: 'Invalid URL' })
+  const recommendations = await api.getRecommendations(id, limit)
   return c.json(recommendations)
 })
 

@@ -1,6 +1,6 @@
 import { Endpoints, EndpointValue } from "./types";
 import { HTTPException } from 'hono/http-exception'
-import crypto from 'node-forge'
+
 
 export class JioSaavnAPI {
 
@@ -59,9 +59,7 @@ export class JioSaavnAPI {
             track
         }
     }
-    async getTrack(url: string): Promise<any> {
-        const id = this.extract.track(url)
-        if (!id) return null
+    async getTrack(id: string): Promise<any> {
         const { data } = await this.request<any>({
             endpoint: Endpoints.songs.link,
             params: {
@@ -69,17 +67,15 @@ export class JioSaavnAPI {
                 type: 'song'
             }
         })
-        if (!data.songs?.length) return new HTTPException(404, { message: 'Track not found' })
-        const tracks = data.songs.map((track: any) => this.formatTrack(track))
+        if (!data.songs?.length) throw new HTTPException(404, { message: 'Track not found' })
+        const track = await this.formatTrack(data.songs[0])
 
         return {
-            track: tracks
+            track: track
         }
     }
 
-    async getAlbum(url: string): Promise<any> {
-        const id = this.extract.albumn(url)
-        if (!id) return null
+    async getAlbum(id: string): Promise<any> {
         const { data } = await this.request<any>({
             endpoint: Endpoints.albums.link,
             params: {
@@ -94,9 +90,7 @@ export class JioSaavnAPI {
         }
     }
 
-    async getArtist(url: string): Promise<any> {
-        const id = this.extract.aritst(url)
-        if (!id) return null
+    async getArtist(id: string): Promise<any> {
         const { data } = await this.request<any>({
             endpoint: Endpoints.artists.link,
             params: {
@@ -111,9 +105,7 @@ export class JioSaavnAPI {
         }
     }
 
-    async getPlaylist(url: string, limit = 100): Promise<any> {
-        const id = this.extract.playlist(url)
-        if (!id) return null
+    async getPlaylist(id: string, limit = 100): Promise<any> {
         const { data } = await this.request<any>({
             endpoint: Endpoints.playlists.link,
             params: {
@@ -129,8 +121,8 @@ export class JioSaavnAPI {
         }
     }
 
-    async getRecommendations(url: string, limit = 10): Promise<any> {
-        const stationId = await this.getStation(url)
+    async getRecommendations(id: string, limit = 10): Promise<any> {
+        const stationId = await this.getStation(id)
         if (!stationId) return null
         const { data, ok } = await this.request<any>({
             endpoint: Endpoints.songs.suggestions,
@@ -182,7 +174,7 @@ export class JioSaavnAPI {
             data.artist = track.more_info.artistMap.primary_artists[0].name
         }
         if (track.more_info?.encrypted_media_url) {
-            data.streamUrl = this.decrypt(track.more_info.encrypted_media_url)
+           data.encryptedMediaUrl = track.more_info.encrypted_media_url
         }
         return data
     }
@@ -224,13 +216,13 @@ export class JioSaavnAPI {
                 return match[1]
             }
         },
-        albumn: (url: string) => {
+        album: (url: string) => {
             const match = url.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/)
             if (match && match[1]) {
                 return match[1]
             }
         },
-        aritst: (url: string) => {
+        artist: (url: string) => {
             const match = url.match(/jiosaavn\.com\/artist\/[^/]+\/([^/]+)$/)
             if (match && match[1]) {
                 return match[1]
@@ -242,27 +234,6 @@ export class JioSaavnAPI {
                 return match[1]
             }
         }
-    }
-
-    private decrypt(encryptedMediaUrl: string): string {
-        const qualities = [
-            320,
-            160,
-            48,
-            12
-        ]
-        const key = '38346591'
-        const iv = '00000000'
-        const encrypted = crypto.util.decode64(encryptedMediaUrl)
-        const decipher = crypto.cipher.createDecipher('DES-ECB', crypto.util.createBuffer(key))
-        decipher.start({ iv: crypto.util.createBuffer(iv) })
-        decipher.update(crypto.util.createBuffer(encrypted))
-        decipher.finish()
-        const decryptedLink = decipher.output.getBytes()
-        for (const quality of qualities) {
-            return decryptedLink.replace('_96', `_${quality}`)
-        }
-        return ''
     }
 }
 

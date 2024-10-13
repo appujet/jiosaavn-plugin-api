@@ -63,10 +63,11 @@ app.get('/artist', async (c) => {
 
 app.get('/playlist', async (c) => {
   const url = c.req.query('url')
+  const limit = Number(c.req.query('limit')) || 100
   if (!url) return c.json({ error: 'Missing URL' })
   const id = api.extract.playlist(url)
   if (!id) return c.json({ error: 'Invalid URL' })
-  const playlist = await api.getPlaylist(id)
+  const playlist = await api.getPlaylist(id, limit)
   return c.json(playlist)
 })
 

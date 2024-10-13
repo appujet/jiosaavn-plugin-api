@@ -3,7 +3,7 @@
     "hono": "jsr:@hono/hono@^4.6.4"
   },
   "tasks": {
-    "start": "deno run --allow-net main.ts"
+    "start": "deno run --allow-net src/mod.ts"
   },
   "compilerOptions": {
     "jsx": "precompile",

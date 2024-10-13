@@ -1,0 +1,16 @@
+{
+  "name": "jiosaavn-api",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "hono": "^4.6.4",
+    "node-forge": "^1.3.1"
+  },
+  "devDependencies": {
+    "@types/node-forge": "^1.3.11",
+    "vercel": "^32.4.1",
+    "vitest": "^2.1.2"
+  }
+}

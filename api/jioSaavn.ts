@@ -186,7 +186,8 @@ export class JioSaavnAPI {
             uri: album.perma_url,
             artworkUrl: album.image.replace('150x150', '500x500'),
             author: album.subtitle,
-            tracks: album.list.map((song: any) => this.formatTrack(song))
+            tracks: album.list.map((song: any) => this.formatTrack(song)),
+            totalSongs: album.list_count,
         }
     }
 

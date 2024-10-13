@@ -8,7 +8,7 @@ describe('JioSaavnAPI', () => {
         
         const query = 'Arijit Singh';
         const results = await jioSaavn.search(query);
-        console.log(results);
+        //console.log(results);
         expect(results).toBeDefined();
         expect(results.results).toBeDefined();
 
@@ -30,11 +30,11 @@ describe('JioSaavnAPI', () => {
         if (!id) {
             throw new Error('Invalid track URL');
         }
-         const album = await jioSaavn.getAlbum(id);
-        //console.log(album.album.songs);
+        const album = await jioSaavn.getAlbum(id);
+        //console.log(album);
         expect(album).toBeDefined();
         expect(album.album).toBeDefined();
-        expect(Array.isArray(album.album.songs)).toBe(true);
+        expect(Array.isArray(album.album.tracks)).toBe(true);
     });
     it('should fetch artist details', async () => {
 

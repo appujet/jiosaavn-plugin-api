@@ -186,7 +186,7 @@ export class JioSaavnAPI {
             uri: album.perma_url,
             artworkUrl: album.image.replace('150x150', '500x500'),
             author: album.subtitle,
-            songs: album.list.map((song: any) => this.formatTrack(song))
+            tracks: album.list.map((song: any) => this.formatTrack(song))
         }
     }
 
@@ -195,7 +195,7 @@ export class JioSaavnAPI {
             name: artist.name,
             uri: artist.urls.overview,
             artworkUrl: artist.image.replace('150x150', '500x500'),
-            songs: artist.topSongs.map((song: any) => this.formatTrack(song))
+            tracks: artist.topSongs.map((song: any) => this.formatTrack(song))
         }
     }
 
@@ -204,7 +204,7 @@ export class JioSaavnAPI {
             title: playlist.title,
             uri: playlist.perma_url,
             artworkUrl: playlist.image.replace('150x150', '500x500'),
-            songs: playlist.list.map((song: any) => this.formatTrack(song)),
+            tracks: playlist.list.map((song: any) => this.formatTrack(song)),
             totalSongs: playlist.list_count,
         }
     }

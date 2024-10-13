@@ -25,7 +25,7 @@ app.get('/', (c) => {
 app.get('/search', async (c) => {
   const query = c.req.query('q')
   if (!query) return c.json({ error: 'Missing query' })
-  const results = await api.search(query)
+  const results = await api.search(encodeURIComponent(query))
   return c.json(results)
 })
 

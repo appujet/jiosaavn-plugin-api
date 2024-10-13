@@ -40,7 +40,7 @@ export class JioSaavnAPI {
         })
         if (!data) throw new HTTPException(404, { message: `no results found for ${query}` })
         if (!data.results?.length) return new HTTPException(404, { message: 'No results found' })
-        const results = data.results.map(async (track: any) => await this.formatTrack(track))
+        const results = data.results.map((track: any) => this.formatTrack(track))
         return {
             results
         }

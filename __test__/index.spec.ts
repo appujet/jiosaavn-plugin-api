@@ -55,6 +55,8 @@ describe('JioSaavnAPI', () => {
     it('should fetch song details', async () => {
         const id = 'S0U546YS';
         const song = await jioSaavn.getTrackById(id);
-        console.log(song);
+        //console.log(song);
+        expect(song).toBeDefined();
+        expect(song.track).toBeDefined();
     });
 });

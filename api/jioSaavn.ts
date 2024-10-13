@@ -1,29 +1,15 @@
-import { Endpoints, EndpointValue } from "./types";
 import { HTTPException } from 'hono/http-exception'
+import { ar } from 'vitest/dist/chunks/reporters.DAfKSDh5';
 
 
 export class JioSaavnAPI {
 
     private async request<T>({
-        endpoint,
-        params,
-        context
+        url,
     }: {
-        endpoint: EndpointValue
-        params: Record<string, string | number>
-        context?: 'android' | 'web6dot0'
+        url: string;
     }): Promise<{ data: T; ok: Response['ok'] }> {
-        const url = new URL('https://www.jiosaavn.com/api.php')
-
-        url.searchParams.append('__call', endpoint.toString())
-        url.searchParams.append('_format', 'json')
-        url.searchParams.append('_marker', '0')
-        url.searchParams.append('api_version', '4')
-        url.searchParams.append('ctx', context || 'web6dot0')
-
-        Object.keys(params).forEach((key) => url.searchParams.append(key, String(params[key])))
-
-        const response = await fetch(url.toString())
+        const response = await fetch(url)
         const data = await response.json()
 
         return { data: data as T, ok: response.ok }
@@ -31,13 +17,9 @@ export class JioSaavnAPI {
 
     async search(query: string): Promise<any> {
         const { data } = await this.request<any>({
-            endpoint: Endpoints.search.songs,
-            params: {
-                q: query,
-                includeMetaTags: '1',
-                cc: 'in'
-            }
+            url: `https://www.jiosaavn.com/api.php?__call=search.getResults&api_version=4&_format=json&_marker=0&cc=in&ctx=web6dot0&includeMetaTags=1&q=${query}`
         })
+        console.log(data.results[0])
         if (!data) throw new HTTPException(404, { message: `no results found for ${query}` })
         if (!data.results?.length) return new HTTPException(404, { message: 'No results found' })
         const results = data.results.map((track: any) => this.formatTrack(track))
@@ -47,42 +29,27 @@ export class JioSaavnAPI {
     }
     
     async getTrackById(id: string): Promise<any> {
-        const { data } = await this.request<any>({
-            endpoint: Endpoints.songs.id,
-            params: {
-                pids: id,
-            }
-        })
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=song.getDetails&api_version=4&_format=json&_marker=0&ctx=web6dot0&pids=${id}`})
         if (!data) throw new HTTPException(404, { message: 'Track not found' })
-        const track = await this.formatTrack(data.songs[0])
+        const track = this.formatTrack(data.songs[0])
         return {
             track
         }
     }
+
     async getTrack(id: string): Promise<any> {
         const { data } = await this.request<any>({
-            endpoint: Endpoints.songs.link,
-            params: {
-                token: id,
-                type: 'song'
-            }
+            url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=song`
         })
         if (!data.songs?.length) throw new HTTPException(404, { message: 'Track not found' })
-        const track = await this.formatTrack(data.songs[0])
-
+        const track = this.formatTrack(data.songs[0])
         return {
             track: track
         }
     }
 
     async getAlbum(id: string): Promise<any> {
-        const { data } = await this.request<any>({
-            endpoint: Endpoints.albums.link,
-            params: {
-                token: id,
-                type: 'album'
-            }
-        })
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=album`})
         if (!data) throw new HTTPException(404, { message: 'album not found' })
         const album = this.formatAlbum(data)
         return {
@@ -91,13 +58,7 @@ export class JioSaavnAPI {
     }
 
     async getArtist(id: string): Promise<any> {
-        const { data } = await this.request<any>({
-            endpoint: Endpoints.artists.link,
-            params: {
-                token: id,
-                type: 'artist'
-            }
-        })
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=artist`})
         if (!data) throw new HTTPException(404, { message: 'artist not found' })
         const artist = this.formatArtist(data)
         return {
@@ -106,14 +67,7 @@ export class JioSaavnAPI {
     }
 
     async getPlaylist(id: string, limit = 100): Promise<any> {
-        const { data } = await this.request<any>({
-            endpoint: Endpoints.playlists.link,
-            params: {
-                token: id,
-                type: 'playlist',
-                n: limit,
-            }
-        })
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=playlist&n=${limit}`})
         if (!data) throw new HTTPException(404, { message: 'playlist not found' })
         const playlist = this.formatPlaylist(data)
         return {
@@ -124,14 +78,7 @@ export class JioSaavnAPI {
     async getRecommendations(id: string, limit = 10): Promise<any> {
         const stationId = await this.getStation(id)
         if (!stationId) return null
-        const { data, ok } = await this.request<any>({
-            endpoint: Endpoints.songs.suggestions,
-            params: {
-                stationid: stationId,
-                k: limit,
-            },
-            context: "android"
-        })
+        const { data, ok } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webradio.getSong&api_version=4&_format=json&_marker=0&ctx=android&stationid=${stationId}&k=${limit}`})
         if (!data || !ok) {
             throw new HTTPException(404, { message: `no suggestions found for the given song` })
         }
@@ -149,33 +96,50 @@ export class JioSaavnAPI {
 
     private async getStation(identifier: string): Promise<any> {
         const encodedSongId = JSON.stringify([encodeURIComponent(identifier)])
-        const { data, ok } = await this.request<any>({
-            endpoint: Endpoints.songs.station,
-            params: {
-                entity_id: encodedSongId,
-                entity_type: 'queue'
-            },
-            context: "android"
-        })
+        const { data, ok } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webradio.createEntityStation&api_version=4&_format=json&_marker=0&ctx=android&entity_id=${encodedSongId}&entity_type=queue`})
         if (!data || !ok || !data.stationid) return new Error('Invalid station id')
         return data.stationid
     }
 
     private formatTrack(track: any) {
-
-        const data: any = {
+        
+        const data = {
             identifier: track.id,
             title: track.title,
-            duration: Number(track.more_info.duration) * 1000,
+            length: Number(track.more_info.duration) * 1000,
             uri: track.perma_url,
             artworkUrl: track.image.replace('150x150', '500x500'),
+            author: null,
+            encryptedMediaUrl: null,
+            albumUrl: null,
+            artistUrl: null,
+            albumName: null,
+            artistArtworkUrl: null,
         }
-        if (track.more_info?.artistMap?.primary_artists?.length) {
-            data.artist = track.more_info.artistMap.primary_artists[0].name
+        if (track?.more_info.artistMap?.primary_artists?.length) {
+            data.author = track.more_info.artistMap.primary_artists[0].name
         }
-        if (track.more_info?.encrypted_media_url) {
-           data.encryptedMediaUrl = track.more_info.encrypted_media_url
+
+        if (track?.more_info.encrypted_media_url) {
+            data.encryptedMediaUrl = track.more_info.encrypted_media_url
         }
+
+        if (track.more_info.album_url) {
+            data.albumUrl = track.more_info.album_url
+        }
+
+        if (track.more_info.artistMap.primary_artists[0].perma_url) {
+            data.artistUrl = track.more_info.artistMap.primary_artists[0].perma_url
+        }
+
+        if (track.more_info.artistMap.primary_artists[0].image) {
+            data.artistArtworkUrl = track.more_info.artistMap.primary_artists[0].image.replace('150x150', '500x500')
+        }
+
+        if (track.more_info.album) {
+            data.albumName = track.more_info.album
+        }
+
         return data
     }
 

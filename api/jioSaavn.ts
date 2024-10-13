@@ -1,6 +1,4 @@
 import { HTTPException } from 'hono/http-exception'
-import { ar } from 'vitest/dist/chunks/reporters.DAfKSDh5';
-
 
 export class JioSaavnAPI {
 
@@ -19,7 +17,6 @@ export class JioSaavnAPI {
         const { data } = await this.request<any>({
             url: `https://www.jiosaavn.com/api.php?__call=search.getResults&api_version=4&_format=json&_marker=0&cc=in&ctx=web6dot0&includeMetaTags=1&q=${query}`
         })
-        console.log(data.results[0])
         if (!data) throw new HTTPException(404, { message: `no results found for ${query}` })
         if (!data.results?.length) return new HTTPException(404, { message: 'No results found' })
         const results = data.results.map((track: any) => this.formatTrack(track))
@@ -27,9 +24,9 @@ export class JioSaavnAPI {
             results
         }
     }
-    
+
     async getTrackById(id: string): Promise<any> {
-        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=song.getDetails&api_version=4&_format=json&_marker=0&ctx=web6dot0&pids=${id}`})
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=song.getDetails&api_version=4&_format=json&_marker=0&ctx=web6dot0&pids=${id}` })
         if (!data) throw new HTTPException(404, { message: 'Track not found' })
         const track = this.formatTrack(data.songs[0])
         return {
@@ -49,7 +46,7 @@ export class JioSaavnAPI {
     }
 
     async getAlbum(id: string): Promise<any> {
-        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=album`})
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=album` })
         if (!data) throw new HTTPException(404, { message: 'album not found' })
         const album = this.formatAlbum(data)
         return {
@@ -58,7 +55,7 @@ export class JioSaavnAPI {
     }
 
     async getArtist(id: string): Promise<any> {
-        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=artist`})
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=artist` })
         if (!data) throw new HTTPException(404, { message: 'artist not found' })
         const artist = this.formatArtist(data)
         return {
@@ -67,7 +64,7 @@ export class JioSaavnAPI {
     }
 
     async getPlaylist(id: string, limit = 100): Promise<any> {
-        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=playlist&n=${limit}`})
+        const { data } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=playlist&n=${limit}` })
         if (!data) throw new HTTPException(404, { message: 'playlist not found' })
         const playlist = this.formatPlaylist(data)
         return {
@@ -78,13 +75,14 @@ export class JioSaavnAPI {
     async getRecommendations(id: string, limit = 10): Promise<any> {
         const stationId = await this.getStation(id)
         if (!stationId) return null
-        const { data, ok } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webradio.getSong&api_version=4&_format=json&_marker=0&ctx=android&stationid=${stationId}&k=${limit}`})
+        const { data, ok } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webradio.getSong&api_version=4&_format=json&_marker=0&ctx=android&stationid=${stationId}&k=${limit}` })
         if (!data || !ok) {
-            throw new HTTPException(404, { message: `no suggestions found for the given song` })
+            throw new HTTPException(404, { message: "no suggestions found for the given song" })
         }
 
         const tracks: any[] = []
         for (const key in data) {
+            // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
             if (data.hasOwnProperty(key) && data[key].song) {
                 tracks.push(this.formatTrack(data[key].song))
             }
@@ -96,13 +94,13 @@ export class JioSaavnAPI {
 
     private async getStation(identifier: string): Promise<any> {
         const encodedSongId = JSON.stringify([encodeURIComponent(identifier)])
-        const { data, ok } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webradio.createEntityStation&api_version=4&_format=json&_marker=0&ctx=android&entity_id=${encodedSongId}&entity_type=queue`})
+        const { data, ok } = await this.request<any>({ url: `https://www.jiosaavn.com/api.php?__call=webradio.createEntityStation&api_version=4&_format=json&_marker=0&ctx=android&entity_id=${encodedSongId}&entity_type=queue` })
         if (!data || !ok || !data.stationid) return new Error('Invalid station id')
         return data.stationid
     }
 
     private formatTrack(track: any) {
-        
+
         const data = {
             identifier: track.id,
             title: track.title,
@@ -177,25 +175,25 @@ export class JioSaavnAPI {
     extract = {
         track: (url: string) => {
             const match = url.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/)
-            if (match && match[1]) {
+            if (match?.[1]) {
                 return match[1]
             }
         },
         album: (url: string) => {
             const match = url.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/)
-            if (match && match[1]) {
+            if (match?.[1]) {
                 return match[1]
             }
         },
         artist: (url: string) => {
             const match = url.match(/jiosaavn\.com\/artist\/[^/]+\/([^/]+)$/)
-            if (match && match[1]) {
+            if (match?.[1]) {
                 return match[1]
             }
         },
         playlist: (url: string) => {
             const match = url.match(/(?:jiosaavn\.com|saavn\.com)\/(?:featured|s\/playlist)\/[^/]+\/([^/]+)$|\/([^/]+)$/)
-            if (match && match[1]) {
+            if (match?.[1]) {
                 return match[1]
             }
         }

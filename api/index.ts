@@ -22,20 +22,20 @@ app.get('/', (c) => {
   return c.json({ message: 'Hello Hono!' })
 })
 
-app.get('/search/:query', async (c) => {
-  const query = c.req.param('query')
+app.get('/search', async (c) => {
+  const query = c.req.query('q')
+  if (!query) return c.json({ error: 'Missing query' })
   const results = await api.search(query)
   return c.json(results)
 })
 
-app.get('/track/id/:id', async (c) => {
-  const id = c.req.param('id')
-   const track = await api.getTrackById(id)
-   return c.json(track)
-})
-
 app.get('/track', async (c) => {
   const url = c.req.query('url')
+  const trackID = c.req.query('id')
+  if (trackID) {
+    const track = await api.getTrackById(trackID)
+    return c.json(track)
+  }
   if (!url) return c.json({ error: 'Missing URL' })
   const id = api.extract.track(url)
   if (!id) return c.json({ error: 'Invalid URL' })
@@ -44,7 +44,7 @@ app.get('/track', async (c) => {
 })
 
 app.get('/album', async (c) => {
-  const url = c.req.param('url')
+  const url = c.req.query('url')
   if (!url) return c.json({ error: 'Missing URL' })
   const id = api.extract.album(url)
   if (!id) return c.json({ error: 'Invalid URL' })
@@ -53,7 +53,7 @@ app.get('/album', async (c) => {
 })
 
 app.get('/artist', async (c) => {
-  const url = c.req.param('url')
+  const url = c.req.query('url')
   if (!url) return c.json({ error: 'Missing URL' })
   const id = api.extract.artist(url)
   if (!id) return c.json({ error: 'Invalid URL' })
@@ -62,7 +62,7 @@ app.get('/artist', async (c) => {
 })
 
 app.get('/playlist', async (c) => {
-  const url = c.req.param('url')
+  const url = c.req.query('url')
   if (!url) return c.json({ error: 'Missing URL' })
   const id = api.extract.playlist(url)
   if (!id) return c.json({ error: 'Invalid URL' })
@@ -71,7 +71,7 @@ app.get('/playlist', async (c) => {
 })
 
 app.get('/recommendations', async (c) => {
-  const url = c.req.param('url')
+  const url = c.req.query('url')
   const limit = Number(c.req.query('limit')) || 10
   if (!url) return c.json({ error: 'Missing URL' })
   const id = api.extract.track(url)

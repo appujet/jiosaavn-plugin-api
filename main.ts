@@ -1,26 +1,19 @@
 import { Hono } from 'hono'
-import { handle } from 'hono/vercel'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
+import { JioSaavnAPI } from "./api.ts";
 
-import { JioSaavnAPI } from './jioSaavn'
-
-export const config = {
-  runtime: 'edge'
-}
-
-const app = new Hono().basePath('/api')
+const app = new Hono()
 
 app.use('*', cors())
 app.use('*', logger())
 app.use('*', prettyJSON())
 
-const api = new JioSaavnAPI()
-
 app.get('/', (c) => {
-  return c.json({ message: 'Hello Hono!' })
+  return c.text('Hello Hono!')
 })
+const api = new JioSaavnAPI()
 
 app.get('/search', async (c) => {
   const query = c.req.query('q')
@@ -80,4 +73,4 @@ app.get('/recommendations', async (c) => {
 })
 
 
-export default handle(app)
+Deno.serve(app.fetch)

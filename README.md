@@ -2,12 +2,8 @@
 
 This is a simple Node.js API that allows you to search for tracks, artists, albums, and playlists on JioSaavn.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/appujet/jiosaavn-rest-api)
+[![image](https://user-images.githubusercontent.com/23035000/116934239-b0d4a400-ac32-11eb-83f6-0c4119d59fa8.png)](https://dash.deno.com/new?url=https://github.com/appujet/jiosaavn-plugin-api)
 
-## 🚀 Getting Started
-
-`bun install`
-`bun run start`
 
 # API Endpoints
 `/search/:query`

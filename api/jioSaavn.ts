@@ -105,7 +105,7 @@ export class JioSaavnAPI {
       identifier: track.id,
       title: track.title,
       length: Number(track.more_info.duration) * 1000,
-      uri: track.perma_url,
+      uri: null,
       artworkUrl: track.image.replace('150x150', '500x500'),
       author: null,
       encryptedMediaUrl: null,
@@ -114,6 +114,11 @@ export class JioSaavnAPI {
       albumName: null,
       artistArtworkUrl: null,
     }
+    
+    if (track?.perma_url) {
+      data.uri = track.perma_url,
+    }
+    
     if (track?.more_info.artistMap?.primary_artists?.length) {
       data.author = track.more_info.artistMap.primary_artists[0].name
     }

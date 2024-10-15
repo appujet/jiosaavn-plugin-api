@@ -18,7 +18,7 @@ const api = new JioSaavnAPI()
 app.get('/search', async (c) => {
   const query = c.req.query('q')
   if (!query) return c.json({ error: 'Missing query' })
-  const results = await api.search(encodeURIComponent(query))
+  const results = await api.search(query)
   return c.json(results)
 })
 

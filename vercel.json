@@ -5,8 +5,8 @@
   ],
   "rewrites": [
     {
-      "source": "/src/(.*)",
-      "destination": "/src"
+      "source": "/api/(.*)",
+      "destination": "/api"
     }
   ],
   "headers": [

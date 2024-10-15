@@ -1,0 +1,15 @@
+{
+  "name": "jiosaavn-api",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "hono": "^4.6.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.3",
+    "vercel": "^32.4.1",
+    "vitest": "^2.1.2"
+  }
+}

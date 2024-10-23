@@ -21,8 +21,8 @@ export class JioSaavnAPI {
     if (!data.results?.length) return new HTTPException(404, { message: 'No results found' })
     const results = data.results.map((track: any) => this.formatTrack(track))
     return {
-      results
-    }
+      results,
+    };
   }
 
   async getTrackById(id: string): Promise < any > {
@@ -116,7 +116,7 @@ export class JioSaavnAPI {
     }
     
     if (track?.perma_url) {
-      data.uri = track.perma_url,
+      data.uri = track.perma_url;
     }
     
     if (track?.more_info.artistMap?.primary_artists?.length) {

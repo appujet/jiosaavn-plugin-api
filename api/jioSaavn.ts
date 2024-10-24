@@ -47,7 +47,7 @@ export class JioSaavnAPI {
 
   async getAlbum(id: string): Promise < any > {
     const { data } = await this.request < any > ({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=album` })
-    if (!data) throw new HTTPException(404, { message: 'album not found' })
+    if (!data) throw new HTTPException(404, { message: 'Album not found' })
     const album = this.formatAlbum(data)
     return {
       album
@@ -55,8 +55,8 @@ export class JioSaavnAPI {
   }
 
   async getArtist(id: string): Promise < any > {
-    const { data } = await this.request < any > ({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=artist` })
-    if (!data) throw new HTTPException(404, { message: 'artist not found' })
+    const { data } = await this.request < any > ({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=artist&n_song=50` })
+    if (!data) throw new HTTPException(404, { message: 'Artist not found' })
     const artist = this.formatArtist(data)
     return {
       artist
@@ -65,7 +65,7 @@ export class JioSaavnAPI {
 
   async getPlaylist(id: string, limit = 100): Promise < any > {
     const { data } = await this.request < any > ({ url: `https://www.jiosaavn.com/api.php?__call=webapi.get&api_version=4&_format=json&_marker=0&ctx=web6dot0&token=${id}&type=playlist&n=${limit}` })
-    if (!data) throw new HTTPException(404, { message: 'playlist not found' })
+    if (!data) throw new HTTPException(404, { message: 'Playlist not found' })
     const playlist = this.formatPlaylist(data)
     return {
       playlist

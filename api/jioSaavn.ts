@@ -197,9 +197,9 @@ export class JioSaavnAPI {
       }
     },
     playlist: (url: string) => {
-      const match = url.match(/(?:jiosaavn\.com|saavn\.com)\/(?:featured|s\/playlist)\/[^/]+\/([^/]+)$|\/([^/]+)$/)
-      if (match?.[1]) {
-        return match[1]
+      const match = url.match(/(?:jiosaavn\.com|saavn\.com)\/(?:featured|s\/playlist)\/[^/]+\/[^/]+\/([^/]+)$|(?:\/([^/]+)$)/);
+      if (match?.[1] || match?.[2]) {
+        return match[1] || match[2];
       }
     }
   }

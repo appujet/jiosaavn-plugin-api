@@ -11,6 +11,7 @@ export class JioSaavnAPI {
 				Accept: "application/json, text/plain, */*",
 			},
 		});
+
 		const contentType = response.headers.get("content-type") || "";
 
 		if (contentType.includes("application/json")) {
@@ -43,6 +44,17 @@ export class JioSaavnAPI {
 		const results = data.results.map((track: any) => this.formatTrack(track));
 		return {
 			results,
+		};
+	}
+
+	async getTrackById(id: string): Promise<any> {
+		const { data } = await this.request<any>({
+			url: `https://www.jiosaavn.com/api.php?__call=song.getDetails&api_version=4&_format=json&_marker=0&ctx=web6dot0&pids=${id}`,
+		});
+		if (!data) throw new HTTPException(404, { message: "Track not found" });
+		const track = this.formatTrack(data.songs[0]);
+		return {
+			track,
 		};
 	}
 
@@ -126,6 +138,38 @@ export class JioSaavnAPI {
 		return data.stationid;
 	}
 
+	public async getEncryptedMediaUrl(encryptedMediaUrl: string) {
+		const params = new URLSearchParams({
+			"__call": "song.generateAuthToken",
+			"url": encryptedMediaUrl,
+			"bitrate": "320",
+			"api_version": "4",
+			"_format": "json",
+			"ctx": "web6dot0",
+			"_marker": "0",
+		});
+
+		const url = `https://www.jiosaavn.com/api.php?${params.toString()}`;
+
+		try {
+			const response = await fetch(url, {
+				headers: {
+					"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+					Accept: "application/json, text/plain, */*",
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP Error: ${response.status}`);
+			}
+
+			return await response.json();
+		} catch (error) {
+			console.error("Fetch error:", error);
+			return null;
+		}
+	}
+
 	private formatTrack(track: any) {
 		const data = {
 			identifier: track.id,
@@ -164,7 +208,7 @@ export class JioSaavnAPI {
 		if (track.more_info) {
 			data.previewUrl = track.more_info.media_preview_url ? track.more_info.media_preview_url : track.more_info.vlink;
 		}
-		
+
 		if (track.more_info.artistMap.primary_artists[0].image) {
 			data.artistArtworkUrl =
 				track.more_info.artistMap.primary_artists[0].image.replace(

@@ -13,17 +13,18 @@ export const config = {
 
 const app = new Hono().basePath("/api");
 
-app.get("/", (c) => {
-	return c.json({
-		message: "JioSaavn API by Appujet",
-	});
-});
 
 app.use("*", cors());
 app.use("*", logger());
 app.use("*", prettyJSON());
 
 const api = new JioSaavnAPI();
+
+app.get("/", (c) => {
+	return c.json({
+		message: "JioSaavn API by Appujet",
+	});
+});
 
 app.get("/search", async (c) => {
 	const query = c.req.query("q");
@@ -41,7 +42,7 @@ app.get("/track", async (c) => {
 	const url = c.req.query("url");
 	const trackID = c.req.query("id");
 	if (trackID) {
-		const track = await api.getTrackById(trackID);
+		const track = await api.getTrack(trackID);
 		return c.json(track);
 	}
 	if (!url) return c.json({ error: "Missing URL" });

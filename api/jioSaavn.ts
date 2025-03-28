@@ -11,7 +11,6 @@ export class JioSaavnAPI {
 				Accept: "application/json, text/plain, */*",
 			},
 		});
-
 		const contentType = response.headers.get("content-type") || "";
 
 		if (contentType.includes("application/json")) {
@@ -44,17 +43,6 @@ export class JioSaavnAPI {
 		const results = data.results.map((track: any) => this.formatTrack(track));
 		return {
 			results,
-		};
-	}
-
-	async getTrackById(id: string): Promise<any> {
-		const { data } = await this.request<any>({
-			url: `https://www.jiosaavn.com/api.php?__call=song.getDetails&api_version=4&_format=json&_marker=0&ctx=web6dot0&pids=${id}`,
-		});
-		if (!data) throw new HTTPException(404, { message: "Track not found" });
-		const track = this.formatTrack(data.songs[0]);
-		return {
-			track,
 		};
 	}
 

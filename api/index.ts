@@ -108,4 +108,5 @@ app.get("/encrypted-media-url", async (c) => {
 	return c.json(authToken);
 });
 
+
 export default handle(app);

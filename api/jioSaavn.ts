@@ -151,23 +151,10 @@ export class JioSaavnAPI {
 
 		const url = `https://www.jiosaavn.com/api.php?${params.toString()}`;
 
-		try {
-			const response = await fetch(url, {
-				headers: {
-					"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
-					Accept: "application/json, text/plain, */*",
-				},
-			});
-
-			if (!response.ok) {
-				throw new Error(`HTTP Error: ${response.status}`);
-			}
-
-			return await response.json();
-		} catch (error) {
-			console.error("Fetch error:", error);
-			return null;
-		}
+		const { data } = await this.request<any>({
+			url,
+		})
+		return data;
 	}
 
 	private formatTrack(track: any) {

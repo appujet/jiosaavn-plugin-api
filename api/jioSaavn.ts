@@ -48,7 +48,6 @@ export class JioSaavnAPI {
 	}
 
 	async getTrackById(id: string): Promise<any> {
-		console.log(id);
 		const { data } = await this.request<any>({
 			url: `https://www.jiosaavn.com/api.php?__call=song.getDetails&api_version=4&_format=json&_marker=0&ctx=web6dot0&pids=${id}`,
 		});
@@ -152,6 +151,7 @@ export class JioSaavnAPI {
 			artistUrl: null,
 			albumName: null,
 			artistArtworkUrl: null,
+			previewUrl: null,
 		};
 
 		if (track?.perma_url) {
@@ -173,7 +173,10 @@ export class JioSaavnAPI {
 		if (track.more_info.artistMap.primary_artists[0].perma_url) {
 			data.artistUrl = track.more_info.artistMap.primary_artists[0].perma_url;
 		}
-
+		if (track.more_info) {
+			data.previewUrl = track.more_info.media_preview_url ? track.more_info.media_preview_url : track.more_info.vlink;
+		}
+		
 		if (track.more_info.artistMap.primary_artists[0].image) {
 			data.artistArtworkUrl =
 				track.more_info.artistMap.primary_artists[0].image.replace(

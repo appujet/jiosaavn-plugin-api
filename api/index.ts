@@ -52,7 +52,12 @@ app.get("/track", async (c) => {
 });
 
 app.get("/album", async (c) => {
-	const url = c.req.query("url");
+	const url = c.req.query("url")
+	const albumID = c.req.query("id");
+	if (albumID) {
+		const album = await api.getAlbum(albumID);
+		return c.json(album);
+	}
 	if (!url) return c.json({ error: "Missing URL" });
 	const id = api.extract.album(url);
 	if (!id) return c.json({ error: "Invalid URL" });
@@ -62,6 +67,11 @@ app.get("/album", async (c) => {
 
 app.get("/artist", async (c) => {
 	const url = c.req.query("url");
+	const artistID = c.req.query("id");
+	if (artistID) {
+		const artist = await api.getArtist(artistID);
+		return c.json(artist);
+	}
 	if (!url) return c.json({ error: "Missing URL" });
 	const id = api.extract.artist(url);
 	if (!id) return c.json({ error: "Invalid URL" });
@@ -72,6 +82,11 @@ app.get("/artist", async (c) => {
 app.get("/playlist", async (c) => {
 	const url = c.req.query("url");
 	const limit = Number(c.req.query("limit")) || 100;
+	const playlistID = c.req.query("id");
+	if (playlistID) {
+		const playlist = await api.getPlaylist(playlistID, limit);
+		return c.json(playlist);
+	}
 	if (!url) return c.json({ error: "Missing URL" });
 	const id = api.extract.playlist(url);
 	if (!id) return c.json({ error: "Invalid URL" });

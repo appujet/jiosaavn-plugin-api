@@ -171,6 +171,7 @@ export class JioSaavnAPI {
 			albumName: null,
 			artistArtworkUrl: null,
 			previewUrl: null,
+			"320kbps": track?.more_info?.["320kbps"], //Add 320kbps field to track data for enhanced audio quality
 		};
 
 		if (track?.perma_url) {

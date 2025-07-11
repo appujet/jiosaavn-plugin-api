@@ -244,29 +244,64 @@ export class JioSaavnAPI {
 
 	extract = {
 		track: (url: string) => {
-			const match = url.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/);
+			// Handle /song/ pattern: /song/[title]/[id]
+			let match = url.match(/(?:jiosaavn\.com|saavn\.com)\/song\/[^/]+\/([^/?&#]+)/);
+			if (match?.[1]) {
+				return match[1];
+			}
+			
+			// Handle /s/song/ pattern: /s/song/[lang]/[album]/[title]/[id]
+			match = url.match(/(?:jiosaavn\.com|saavn\.com)\/s\/song\/[^/]+\/[^/]+\/[^/]+\/([^/?&#]+)/);
 			if (match?.[1]) {
 				return match[1];
 			}
 		},
 		album: (url: string) => {
-			const match = url.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/);
+			
+			// Handle /album/ pattern: /album/[title]/[id]
+			let match = url.match(/(?:jiosaavn\.com|saavn\.com)\/album\/[^/]+\/([^/?&#]+)/);
 			if (match?.[1]) {
 				return match[1];
 			}
+			
+			// Handle /p/album/ pattern: /p/album/[lang]/[title]/[id]
+			match = url.match(/(?:jiosaavn\.com|saavn\.com)\/p\/album\/[^/]+\/[^/]+\/([^/?&#]+)/);
+			if (match?.[1]) {
+				return match[1];
+			}
+			
+			return null;
 		},
 		artist: (url: string) => {
-			const match = url.match(/jiosaavn\.com\/artist\/[^/]+\/([^/]+)$/);
+			// Handle /artist/ pattern: /artist/[name]/[id]
+			let match = url.match(/(?:jiosaavn\.com|saavn\.com)\/artist\/[^/]+\/([^/?&#]+)/);
+			if (match?.[1]) {
+				return match[1];
+			}
+			
+			// Handle /s/artist/ pattern: /s/artist/[name]/[id]
+			match = url.match(/(?:jiosaavn\.com|saavn\.com)\/s\/artist\/[^/]+\/([^/?&#]+)/);
 			if (match?.[1]) {
 				return match[1];
 			}
 		},
 		playlist: (url: string) => {
-			const match = url.match(
-				/(?:jiosaavn\.com|saavn\.com)\/(?:featured|s\/playlist)\/[^/]+\/[^/]+\/([^/]+)$|(?:\/([^/]+)$)/,
-			);
-			if (match?.[1] || match?.[2]) {
-				return match[1] || match[2];
+			// Handle /featured/ pattern: /featured/[title]/[id]
+			let match = url.match(/(?:jiosaavn\.com|saavn\.com)\/featured\/[^/]+\/([^/?&#]+)/);
+			if (match?.[1]) {
+				return match[1];
+			}
+			
+			// Handle /s/featured/ pattern: /s/featured/[lang]/[title]/[id]
+			match = url.match(/(?:jiosaavn\.com|saavn\.com)\/s\/featured\/[^/]+\/[^/]+\/([^/?&#]+)/);
+			if (match?.[1]) {
+				return match[1];
+			}
+			
+			// Handle /s/playlist/ pattern: /s/playlist/[id1]/[lang]/[id2] - extract the final ID
+			match = url.match(/(?:jiosaavn\.com|saavn\.com)\/s\/playlist\/[^/]+\/[^/]+\/([^/?&#]+)/);
+			if (match?.[1]) {
+				return match[1];
 			}
 		},
 	};

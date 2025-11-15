@@ -30,7 +30,23 @@ lerna-debug.log*
 .vercel
 
 
-#locks
+# locks
 yarn.lock
+yarn-lock.yaml
 package-lock.json
+pnpm-lock.yaml
 bun.lock
+bun.lockb
+deno.lock
+
+# build & dist
+dist/
+build/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

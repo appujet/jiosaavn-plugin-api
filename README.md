@@ -1846,3 +1846,27 @@ This is a simple Node.js API that allows you to search for tracks, artists, albu
 </details>
 
 ---
+
+### /api/media-url
+- **Method:** GET
+- **Description:** Retrieves and decrypts the direct media URL for a track. Pass either a track URL or track ID to get the playable media URL.
+- **Parameters:**
+  - `url (optional): The JioSaavn track URL. If provided, the track ID will be extracted from it.
+  - `id (optional): The direct track ID. If provided, this takes priority over URL.
+  - **Note:** Either `url or `id must be provided.
+  - **Example Request (with URL):** `/api/media-url?url=https://www.jiosaavn.com/song/demons/Qw9edk1hY0Y
+  - **Example Request (with ID):** `/api/media-url?id=3g5G9QTu
+- **Response Format:** Returns a JSON object with the decrypted media URL.
+
+<details>
+<summary>Response Example</summary>
+
+`json
+{
+  "mediaUrl": "https://aac.saavncdn.com/091/0d3cfd6080a23f13ace1c38c3296e18f_320.mp4"
+}
+`
+
+</details>
+
+---

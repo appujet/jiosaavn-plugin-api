@@ -185,8 +185,12 @@ export class JioSaavnAPI {
       data.uri = track.perma_url;
     }
 
-    if (track?.more_info.artistMap?.primary_artists?.length) {
-      data.author = track.more_info.artistMap.primary_artists[0].name;
+    const artists = track?.more_info?.artistMap?.primary_artists ?? track?.more_info?.artistMap?.artists ??[];
+    
+    const uniqueArtists = [...new Map(artists.map((a) => [a.id, a])).values()];
+
+    if (uniqueArtists.length) {
+        data.author = uniqueArtists.map((a) => a.name).join(', ');
     }
 
     if (track?.more_info.encrypted_media_url) {

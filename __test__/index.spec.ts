@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { app } from "../api/index";
-import { JioSaavnAPI } from "../api/jioSaavn";
+import { app } from "../api/index.js";
+import { JioSaavnAPI } from "../api/jioSaavn.js";
 
 const jioSaavn = new JioSaavnAPI();
 

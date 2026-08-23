@@ -235,6 +235,10 @@ app.route("/api", apiRouter);
 
 export { app };
 
+export const GET = (req: Request) => app.fetch(req);
+export const POST = (req: Request) => app.fetch(req);
+export const OPTIONS = (req: Request) => app.fetch(req);
+
 const port = Number(process.env.PORT) || 3000;
 
 if (typeof Bun !== "undefined" && import.meta.main) {

@@ -16,7 +16,6 @@
 	"scripts": {
 		"dev": "bun --hot api/index.ts",
 		"start": "bun api/index.ts",
-		"build": "tsc --noEmit",
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",
 		"test:watch": "bun test --watch",

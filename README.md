@@ -1,14 +1,27 @@
 # 🎵 JioSaavn API
 
-This is a simple Node.js API that allows you to search for tracks, artists, albums, and playlists on JioSaavn.
+High-performance JioSaavn API built with **Hono** and **Bun** for searching and retrieving tracks, artists, albums, playlists, recommendations, and decrypted media streaming URLs.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/notdeltaxd/jiosaavn-plugin-api)
+[![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL%203.0%20or%20later-blue.svg)](LICENSE)
 
-## 🚀 Getting Started
+## 🚀 Getting Started (with Bun)
 
-- `npm i`
+### Install dependencies
+```bash
+bun install
+```
 
-- `npm run dev`
+### Run local dev server (with hot reload)
+```bash
+bun run dev
+```
+The server will be running at `http://localhost:3000`.
+
+### Run tests
+```bash
+bun test
+```
 
 # API Endpoints
 
@@ -1870,3 +1883,13 @@ This is a simple Node.js API that allows you to search for tracks, artists, albu
 </details>
 
 ---
+
+## 👤 Author
+
+**notdeltaxd**
+- GitHub: [@notdeltaxd](https://github.com/notdeltaxd)
+- Repository: [https://github.com/notdeltaxd/jiosaavn-plugin-api](https://github.com/notdeltaxd/jiosaavn-plugin-api)
+
+## 📄 License
+
+This project is licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**. See the [LICENSE](LICENSE) file for full details.

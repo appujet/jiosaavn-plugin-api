@@ -1,20 +1,36 @@
 {
-  "name": "jiosaavn-api",
-  "type": "module",
-  "scripts": {
-    "start": "vercel dev",
-    "deploy": "vercel"
-  },
-  "dependencies": {
-    "@hono/node-server": "^1.13.7",
-    "hono": "^4.6.12",
-    "install": "^0.13.0",
-    "node-forge": "^1.3.1"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.3",
-    "@types/node-forge": "^1.3.14",
-    "vercel": "^32.7.2",
-    "vitest": "^2.1.5"
-  }
+	"name": "jiosaavn-api",
+	"version": "1.0.0",
+	"description": "High-performance JioSaavn Music API built with Hono and Bun",
+	"type": "module",
+	"author": "notdeltaxd <https://github.com/notdeltaxd>",
+	"license": "AGPL-3.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/notdeltaxd/jiosaavn-plugin-api.git"
+	},
+	"bugs": {
+		"url": "https://github.com/notdeltaxd/jiosaavn-plugin-api/issues"
+	},
+	"homepage": "https://github.com/notdeltaxd/jiosaavn-plugin-api#readme",
+	"scripts": {
+		"dev": "bun --hot api/index.ts",
+		"start": "bun api/index.ts",
+		"test": "bun test",
+		"test:watch": "bun test --watch",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"deploy": "vercel"
+	},
+	"dependencies": {
+		"hono": "^4.6.12",
+		"node-forge": "^1.3.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.3",
+		"@types/bun": "^1.4.0",
+		"@types/node-forge": "^1.3.14",
+		"vercel": "^32.7.2"
+	}
 }
